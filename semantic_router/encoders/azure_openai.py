@@ -62,11 +62,11 @@ class AzureOpenAIEncoder(DenseEncoder):
         :param azure_ad_token_provider: A callable function that returns an Azure AD/Entra ID token.
         :type azure_ad_token_provider: Callable[[], str], optional
 
-        :param http_client_options: Dictionary of options to configure httpx client
+        :param http_client_options: Dictionary of options to configure the HTTP client
             Example:
             ```
                 {
-                    "proxies": "http://proxy.server:8080",
+                    "proxy": "http://proxy.server:8080",
                     "timeout": 20.0,
                     "headers": {"Authorization": "Bearer xyz"}
                 }
@@ -127,12 +127,16 @@ class AzureOpenAIEncoder(DenseEncoder):
             self.max_retries = max_retries
 
         # Only create HTTP clients if options are provided
-        sync_http_client = (
-            httpx.Client(**http_client_options) if http_client_options else None
-        )
-        async_http_client = (
-            httpx.AsyncClient(**http_client_options) if http_client_options else None
-        )
+        if http_client_options:
+            sync_client_class = getattr(openai, "DefaultHttpx2Client", httpx.Client)
+            async_client_class = getattr(
+                openai, "DefaultAsyncHttpx2Client", httpx.AsyncClient
+            )
+            sync_http_client = sync_client_class(**http_client_options)
+            async_http_client = async_client_class(**http_client_options)
+        else:
+            sync_http_client = None
+            async_http_client = None
 
         assert azure_endpoint is not None and self.deployment_name is not None
 

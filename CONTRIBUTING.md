@@ -68,6 +68,6 @@ Two rules keep the suite fast and parallel-safe:
 
 # Continuous integration
 
-- `.github/workflows/ci.yml` runs lint and `make test_cov` on Python 3.10 and 3.13 for every pull request and push to `main` or `v0`. The service containers are declared as GitHub Actions `services`, so the job needs no secrets and works for forks.
+- `.github/workflows/ci.yml` runs lint and `make test` on Python 3.10, 3.13, and 3.14 for every pull request and push to `main` or `v0`. The service containers are declared as GitHub Actions `services`, so the job needs no secrets and works for forks.
 - `.github/workflows/live.yml` runs `make test_live` with the repo's API keys. Maintainers can run it against a pull request by adding the `run-live-tests` label (removed automatically when new commits are pushed) or from the *Run workflow* button with a PR number.
 - `.github/workflows/docs.yml` publishes the docs on pushes to `main` (as the v1 docs) or `v0` (as the v0 docs) that touch `docs/` or `semantic_router/`.

@@ -34,6 +34,17 @@ def openai_encoder(mock_openai_client, mock_openai_async_client):
 
 
 class TestAzureOpenAIEncoder:
+    def test_custom_http_client_options(self):
+        encoder = AzureOpenAIEncoder(
+            azure_endpoint="https://test-endpoint.openai.azure.com",
+            api_version="test-version",
+            api_key="test_api_key",
+            http_client_options={"timeout": 10},
+        )
+
+        assert encoder.client is not None
+        assert encoder.async_client is not None
+
     def test_openai_encoder_init_success(self, mocker):
         mocker.patch("os.getenv", return_value="fake-api-key")
         encoder = AzureOpenAIEncoder()
